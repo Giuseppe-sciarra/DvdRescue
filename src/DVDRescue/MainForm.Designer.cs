@@ -1,4 +1,4 @@
-namespace DVDRescue;
+﻿namespace DVDRescue;
 
 partial class MainForm
 {
@@ -168,9 +168,9 @@ partial class MainForm
         chkDeepScan.Location = new Point(218, 58);
         chkDeepScan.Size = new Size(280, 22);
 
-        chkThorough.Text = "Parti subito col recupero insistente (di solito non serve: ci arriva da solo)";
+        chkThorough.Text = "Parti subito col recupero insistente";
         chkThorough.Location = new Point(504, 58);
-        chkThorough.Size = new Size(340, 22);
+        chkThorough.Size = new Size(270, 22);
 
         chkSaveImage.Text = "Salva anche una copia integrale del disco (.bin)";
         chkSaveImage.Location = new Point(14, 84);
