@@ -97,6 +97,15 @@ jobs:
             if (-not $tagName) { $tagName = "v$v" }
           }
 
+          # push su main/master: build incrementale pubblicata come release (come VHSCapture):
+          # v<major>.<minor>.<numero di esecuzione>, così ogni upload produce subito un pacchetto scaricabile
+          if (-not $publish -and ("${{ github.ref }}" -eq "refs/heads/main" -or "${{ github.ref }}" -eq "refs/heads/master")) {
+            $mm = ($v -split '\.')[0..1] -join '.'
+            $v = "$mm.${{ github.run_number }}"
+            $publish = $true
+            $tagName = "v$v"
+          }
+
           # Su una release il numero deve essere pulito; su una build qualsiasi serve invece
           # sapere da quale esecuzione arriva l'exe che si ha sul disco.
           $label = if ($publish) { $v } else { "$v-build.${{ github.run_number }}" }
@@ -192,6 +201,7 @@ jobs:
           name: DVDRescue ${{ steps.ver.outputs.version }}
           files: dist/*.zip
           draft: false
+          make_latest: true
           generate_release_notes: true
           body: |
             **DVDRescue ${{ steps.ver.outputs.version }}**
