@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <!--
     Banco di prova del motore di recupero: gira su Windows e su Linux perché include
@@ -24,6 +24,7 @@
     <Compile Remove="..\..\src\DVDRescue\MainForm.cs" />
     <Compile Remove="..\..\src\DVDRescue\MainForm.Designer.cs" />
     <Compile Remove="..\..\src\DVDRescue\Program.cs" />
+    <Compile Remove="..\..\src\DVDRescue\Crm\**\*.cs" />
     <Compile Remove="..\..\src\DVDRescue\bin\**\*.cs" />
     <Compile Remove="..\..\src\DVDRescue\obj\**\*.cs" />
   </ItemGroup>

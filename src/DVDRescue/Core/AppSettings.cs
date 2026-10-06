@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace DVDRescue.Core;
@@ -36,6 +36,13 @@ public sealed class AppSettings
 
     /// <summary>Ultima unità usata, per ritrovarla selezionata al prossimo avvio.</summary>
     public string LastDrive { get; set; } = "";
+
+    // ── collegamento al CRM Tastiere Digitali (stesse API di VHSCapture, tipo «DVD da recuperare») ──
+    public bool CrmAttivo { get; set; }
+    public string CrmUrl { get; set; } = "";
+    public string CrmToken { get; set; } = "";
+    /// <summary>La scheda su cui si stava lavorando: all'avvio viene riproposta («▶ Continua con…»).</summary>
+    public int CrmUltimoCliente { get; set; }
 
     [JsonIgnore]
     public static string FilePath

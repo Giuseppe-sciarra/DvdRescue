@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Reflection;
 using DVDRescue.Core;
 using DVDRescue.Images;
@@ -26,6 +26,12 @@ public partial class MainForm : Form
     private int _percent;
     private readonly System.Windows.Forms.Timer _uiTimer = new() { Interval = 200 };
 
+    // ── CRM: cliente in corso, DVD recuperati/totali, eventi (stesso giro di VHSCapture) ──
+    private CrmSessione _crm;
+    private CrmBanda _crmBanda;
+    private readonly CrmImpostazioni _crmImp = new();
+    private string _discoCorrente = "";
+
     public MainForm()
     {
         InitializeComponent();
@@ -52,6 +58,22 @@ public partial class MainForm : Form
         if (string.IsNullOrEmpty(videos)) videos = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
         _settings = AppSettings.Load();
+
+        // collegamento al CRM: banda in alto, tutto il resto scende di 44 px
+        _crmImp.Attivo = _settings.CrmAttivo; _crmImp.Url = _settings.CrmUrl ?? ""; _crmImp.Token = _settings.CrmToken ?? ""; _crmImp.UltimoCliente = _settings.CrmUltimoCliente;
+        _crm = new CrmSessione(_crmImp, imp =>
+        {
+            _settings.CrmAttivo = imp.Attivo; _settings.CrmUrl = imp.Url; _settings.CrmToken = imp.Token; _settings.CrmUltimoCliente = imp.UltimoCliente;
+            _settings.Save();
+        }, Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "");
+        _crmBanda = new CrmBanda(_crm, this) { Dock = DockStyle.None, Location = new Point(0, 0), Width = ClientSize.Width, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
+        const int hBanda = 44;
+        foreach (Control c in Controls.Cast<Control>().ToList())
+            if ((c.Anchor & AnchorStyles.Top) != 0) c.Top += hBanda;
+        MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height + hBanda);
+        ClientSize = new Size(ClientSize.Width, ClientSize.Height + hBanda);
+        Controls.Add(_crmBanda);
+        _ = _crm.RiprendiUltimo();
 
         txtOutFolder.Text = string.IsNullOrWhiteSpace(_settings.OutputFolder)
             ? Path.Combine(videos, "DVDRescue")
@@ -850,11 +872,16 @@ public partial class MainForm : Form
             return;
         }
 
+        if (!await _crm.PreparaCliente(this)) return;      // per quale cliente del CRM? (se il collegamento è attivo)
+
         _cts = new CancellationTokenSource();
         var ct = _cts.Token;
         var progress = CreateProgress();
 
         SetBusy(true);
+        _discoCorrente = !string.IsNullOrWhiteSpace(_result?.VolumeLabel) ? _result.VolumeLabel : (_result?.ProfileText ?? "disco");
+        await _crm.Inizio(_discoCorrente);
+        bool crmEsitoDato = false;
 
         try
         {
@@ -910,6 +937,8 @@ public partial class MainForm : Form
 
             Log($"Completato: {selected.Count} file in {options.OutputFolder}");
             SaveSettings();
+            crmEsitoDato = true;
+            await _crm.ChiediFine(this, 1, _discoCorrente + " → " + options.OutputFolder, false);   // un DVD recuperato per il CRM
 
             if (MessageBox.Show("Fatto. Apro la cartella?", "DVDRescue",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
@@ -936,6 +965,7 @@ public partial class MainForm : Form
             _lastProgress = null;
             progressBar.Value = 0;
             lblStatus.Text = "Pronto.";
+            if (!crmEsitoDato) await _crm.ChiediFine(this, 1, _discoCorrente, true);   // annullato o errore: non si conta niente
         }
     }
 }
