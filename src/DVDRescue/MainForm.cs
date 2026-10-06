@@ -69,7 +69,15 @@ public partial class MainForm : Form
         _crmBanda = new CrmBanda(_crm, this) { Dock = DockStyle.None, Location = new Point(0, 0), Width = ClientSize.Width, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
         const int hBanda = 44;
         foreach (Control c in Controls.Cast<Control>().ToList())
-            if ((c.Anchor & AnchorStyles.Top) != 0) c.Top += hBanda;
+        {
+            if ((c.Anchor & AnchorStyles.Top) == 0) continue;
+            if ((c.Anchor & AnchorStyles.Bottom) != 0)
+                // ancorato sopra e sotto (lista video): scende la cima ma il fondo resta fermo,
+                // altrimenti con l'allargamento della finestra si allunga di 2×hBanda e copre "3. Come salvare"
+                c.SetBounds(c.Left, c.Top + hBanda, c.Width, c.Height - hBanda);
+            else
+                c.Top += hBanda;
+        }
         MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height + hBanda);
         ClientSize = new Size(ClientSize.Width, ClientSize.Height + hBanda);
         Controls.Add(_crmBanda);
