@@ -4,6 +4,8 @@ Recupera i video dai dischi che il computer non riesce ad aprire — i dischetti
 videocamere rimasti **non finalizzati**, i DVD-VR dei registratori, le riprese AVCHD, i Blu-ray
 registrati, le registrazioni interrotte a metà — e li consegna in **MP4**, pronti da guardare.
 
+**Download, guida e domande frequenti:** [tastieredigitali.tech/casi-studio/dvdrescue](https://tastieredigitali.tech/casi-studio/dvdrescue/)
+
 Niente VOB, niente IFO, niente authoring: si mette il disco, si preme un tasto, escono i video.
 
 ---
