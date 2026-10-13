@@ -43,6 +43,8 @@ public sealed class AppSettings
     public string CrmToken { get; set; } = "";
     /// <summary>La scheda su cui si stava lavorando: all'avvio viene riproposta («▶ Continua con…»).</summary>
     public int CrmUltimoCliente { get; set; }
+    /// <summary>Con un cliente del CRM si salva dentro la sua cartella «Nome Cognome» (come VHSCapture).</summary>
+    public bool CrmCartellaCliente { get; set; } = true;
 
     [JsonIgnore]
     public static string FilePath

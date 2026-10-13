@@ -61,9 +61,11 @@ public partial class MainForm : Form
 
         // collegamento al CRM: banda in alto, tutto il resto scende di 44 px
         _crmImp.Attivo = _settings.CrmAttivo; _crmImp.Url = _settings.CrmUrl ?? ""; _crmImp.Token = _settings.CrmToken ?? ""; _crmImp.UltimoCliente = _settings.CrmUltimoCliente;
+        _crmImp.CartellaCliente = _settings.CrmCartellaCliente;
         _crm = new CrmSessione(_crmImp, imp =>
         {
             _settings.CrmAttivo = imp.Attivo; _settings.CrmUrl = imp.Url; _settings.CrmToken = imp.Token; _settings.CrmUltimoCliente = imp.UltimoCliente;
+            _settings.CrmCartellaCliente = imp.CartellaCliente;
             _settings.Save();
         }, Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "");
         _crmBanda = new CrmBanda(_crm, this) { Dock = DockStyle.None, Location = new Point(0, 0), Width = ClientSize.Width, Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
@@ -898,6 +900,10 @@ public partial class MainForm : Form
             options.OutputFolder = PrepareFolder(options.OutputFolder);
             if (options.OutputFolder != txtOutFolder.Text.Trim())
                 txtOutFolder.Text = options.OutputFolder;
+            // cliente del CRM: i file vanno nella sua cartella «Nome Cognome» dentro quella scelta, come VHSCapture
+            // (la casella resta sulla cartella scelta, così il cliente dopo non finisce dentro quello di prima)
+            options.OutputFolder = _crm.Destinazione(options.OutputFolder, Log);
+            if (_crm.CartellaCliente() != null) Log($"Cliente: salvo in {options.OutputFolder}");
 
             if ((options.MakeH264 || options.MakeRemux) && _ffmpegPath == null)
             {

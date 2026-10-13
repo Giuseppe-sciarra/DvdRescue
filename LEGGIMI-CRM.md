@@ -14,6 +14,8 @@ quando il supporto è **DVD** (quantità = quanti dischi).
 - Durante l'estrazione nella Coda del CRM compare «📀 PC · Rossi · recupera il DVD 1º di 2».
 - A fine estrazione: **Fatto, conta** (un DVD recuperato) · **Scarta** (il disco non si recupera: il totale scende,
   il prezzo si ricalcola) · **Non contare**. Annullato o errore → non si conta niente.
+- **Cartella del cliente** (come VHSCapture): con un cliente scelto i file vanno in «cartella di uscita\Nome Cognome», creata se
+  non c'è; la casella della cartella di uscita resta quella scelta. Si spegne nel ⚙ del collegamento al CRM.
 - I DVD recuperati contano anche nel totale dei supporti della scheda: finiti tutti (cassette + DVD) la scheda
   diventa «pronta» nel CRM. **🔢 Conteggio** corregge fatti/totali.
 - Se la rete salta, gli eventi restano in coda su disco e partono da soli.
